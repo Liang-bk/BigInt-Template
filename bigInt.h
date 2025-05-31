@@ -125,11 +125,11 @@ public:
     bool operator > (const BigInt& rhs) const {
         // 正数大于负数(0视为正数)
         if (neg != rhs.neg) {
-            return neg;
+            return rhs.neg;
         }
         // 两数同为正数或负数, 其比较是反着来的
         // 如果是正数, 位数多的大
-        // 负数, 位数少的大
+        // 如果是负数, 位数少的大
         if (len != rhs.len) {
             if (!neg) return len > rhs.len;
             else return len < rhs.len;
@@ -147,9 +147,9 @@ public:
     }
 
     bool operator < (const BigInt& rhs) const {
-        // 两数符号位不同: 如果this.neg是正数, 返回false, 否则返回true
+        // 两数符号位不同: this是负数, 返回true, 否则返回false
         if (neg != rhs.neg) {
-            return rhs.neg;
+            return neg;
         }
         // 同>的比较, 但反过来
         // 位数不同, 位数低的更小
@@ -360,6 +360,21 @@ public:
         // }
         return res;
     }
+
+    /**
+     * 高精模低精
+     * 余数的正负根据被除数的正负来定(c++与python不同)
+     */
+    BigInt operator % (int rhs) const {
+        BigInt dividend = abs(*this), quotient;
+        int divisor = ::abs(rhs);
+        quotient = dividend / divisor;
+        BigInt remainder = dividend - quotient * divisor;
+        if (remainder != BigInt(0)) {
+            remainder.neg = this->neg;
+        }
+        return remainder;
+    }
     // 高精度乘高精度
     BigInt operator * (const BigInt &rhs) const {
         BigInt res{};
@@ -436,6 +451,17 @@ public:
         }
         quotient.neg = t_neg;
         return quotient;
+    }
+    // 高精度模高精度
+    BigInt operator % (const BigInt &rhs) const {
+        BigInt dividend(*this), divisor(rhs);
+        dividend.neg = divisor.neg = false;
+        BigInt quotient = dividend / divisor;
+        BigInt remainder = dividend - quotient * divisor;
+        if (remainder != BigInt(0)) {
+            remainder.neg = this->neg;
+        }
+        return remainder;
     }
     BigInt operator += (const BigInt &rhs) {
         *this = (*this) + rhs;
@@ -529,9 +555,17 @@ public:
         neg = t_neg;
         return *this;
     }
+    BigInt operator %= (int rhs) {
+        *this = *this % rhs;
+        return *this;
+    }
+    BigInt operator %= (const BigInt &rhs) {
+        *this = (*this) % rhs;
+        return *this;
+    }
     static BigInt abs(const BigInt &big_int) {
         BigInt res = big_int;
-        if (res.neg) res.neg = false;
+        res.neg = false;
         return res;
     }
     // 输入

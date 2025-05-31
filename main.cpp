@@ -34,6 +34,16 @@ void testBigAndBig() {
                 std::cout << c << std::endl;
             }
         break;
+        case '%':
+            if (b == BigInt(0)) {
+                std::cout << "Error: Division by zero" << std::endl;
+            } else {
+                c = a % b;
+                a %= b;
+                assert(a == c);
+                std::cout << c << std::endl;
+            }
+        break;
     }
 }
 void testBigAndSmall() {
@@ -67,6 +77,16 @@ void testBigAndSmall() {
             } else {
                 c = a / b;
                 a /= b;
+                assert(a == c);
+                std::cout << c << std::endl;
+            }
+        break;
+        case '%':
+            if (b == 0) {
+                std::cout << "Error: Division by zero" << std::endl;
+            } else {
+                c = a % b;
+                a %= b;
                 assert(a == c);
                 std::cout << c << std::endl;
             }

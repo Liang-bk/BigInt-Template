@@ -10,8 +10,8 @@
 - [x] BigInt * int
 - [x] BigInt / BigInt
 - [x] BigInt / int
-- [ ] BigInt % BigInt
-- [ ] BigInt % int
+- [x] BigInt % BigInt
+- [x] BigInt % int
 
 ## 后续计划
 

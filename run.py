@@ -2,8 +2,8 @@ import random
 import subprocess # 用于调用C++程序
 
 # --- 配置参数 ---
-NUM_TEST_CASES = 10000   # 测试用例数量
-MAX_DIGITS = 200      # 生成大整数的最大位数 (可以根据你的BigInt能力调整)
+NUM_TEST_CASES = 2000   # 测试用例数量
+MAX_DIGITS = 300      # 生成大整数的最大位数 (可以根据你的BigInt能力调整)
 CPP_EXECUTABLE_PATH = "bigInt.exe" # C++编译后的可执行文件路径
 
 # --- 辅助函数 ---
@@ -57,8 +57,9 @@ def get_python_result(num1_str, op_str, num2_str):
             # Python的 % 结果符号与除数相同
             # C++的 % 结果符号与被除数相同 (C++11及之后标准)
             # 为了匹配C++11之后的 % 行为：
-            res = num1 % num2
-            # 如果你的C++实现与Python的%行为不一致，需要在这里调整
+            positive = (num1 >= 0)
+            res = abs(num1) % abs(num2)
+            # C++实现与Python的%行为不一致，需要在这里调整
             # 例如，如果Python是-7 % 5 = 3, C++可能是 -7 % 5 = -2
             # 如果要匹配C++的% (结果符号与被除数一致):
             # py_mod = num1 % num2
@@ -66,7 +67,9 @@ def get_python_result(num1_str, op_str, num2_str):
             #    py_mod += num2 #调整
             # return str(py_mod)
             # 假设 C++ 的 % 结果与被除数符号一致
-            return str(num1 % num2)
+            if not positive:
+                res = -res
+            return str(res)
 
     except ZeroDivisionError:
         return "ZeroDivisionError"
@@ -84,7 +87,8 @@ def run_test():
     passed_count = 0
     failed_cases = []
 
-    operations = ['+', '-', '*', '/'] # 初始可以先测试加减乘，除法和取模比较复杂
+    operations = ['+', '-', '*', '/', '%'] # 初始可以先测试加减乘，除法和取模比较复杂
+    # operations = ['%']  # 初始可以先测试加减乘，除法和取模比较复杂
     # if MAX_DIGITS > 20: # 对于非常大的数，除法和取模可能非常耗时
     #     operations = ['+', '-', '*']
 
